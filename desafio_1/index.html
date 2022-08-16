@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Conversor de Base Númerica</title>
+</head>
+<body>
+    <script src="script.js"></script>
+    <div class="container">
+
+        <header class="header">
+            <h2>Conversor de Base Númerica</h2>
+        </header>
+
+        <div class="box-form">
+            <form>
+                <label for="tipos_bases">Selecione uma Base: </label>
+                <select id="tipos_bases" onchange="habi_desabi(this.value)">
+                    <option value="0" selected>--</option>
+                    <option value="10">Decimal</option>
+                    <option value="2">Binário</option>
+                    <option value="8">Octal</option>
+                    <option value="16">Hexadecimal</option>
+                </select>
+
+                <label for="ipt_dec">Decimal:</label>
+                <input type="text" id="ipt_dec" onkeypress="return type_dec(event);" disabled>
+
+                <label for="ipt_bin">Binário:</label>
+                <input type="text" id="ipt_bin" onkeypress="return type_bin(event);" disabled>
+
+                <label for="ipt_oct">Octal:</label>
+                <input type="text" id="ipt_oct" onkeypress="return type_oct(event);" disabled>
+
+                <label for="ipt_hexa">Hexadecimal:</label>
+                <input type="text" id="ipt_hexa" onkeypress="return type_hexa(event);" disabled>
+
+                <div class="container-btn">
+                    <button type="button" onclick="chamar_calculo();">Converter</button>
+                    <input type="reset" value="Limpar" onclick="habi_desabi()">
+                </div>
+            </form>
+        </div>
+        <footer>
+            <p class="footer-text">Desenvolvido por José Dagmar FSS</p>
+        </footer>
+    </div>    
+</body>
+</html>
+
+
