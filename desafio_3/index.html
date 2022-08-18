@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js" integrity="sha512-nnzkI2u2Dy6HMnzMIkh7CPd1KX445z38XIu4jG1jGw7x5tSL3VBjE44dY4ihMU1ijAQV930SPM12cCFrB18sVw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/socket.io/socket.io.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+    <title>Modelagem de Dados</title>
+</head>
+
+<body>
+	<header>
+        <h1>Chat - Cartas de Amigos</h1>
+    </header>
+    
+	<div id='acesso_usuario'>
+		<form id='login'>
+			<input type='text' placeholder='Insira seu nome' name='nome' id='nome' />
+			<input type='submit' value='Entrar' />
+		</form>
+	</div>
+	
+	<div id='sala_chat'>
+		<div id="historico_mensagens"></div>
+		<select multiple="multiple" id='lista_usuarios'><option value=''>Todos</option></select>
+		<form id='chat'>
+			<input type='text' id='texto_mensagem' name='texto_mensagem' />
+			<input type='submit' value='Enviar mensagem!' />	
+		</form>
+	</div>    
+
+    <script>
+        var socket = io.connect();
+		
+		$("form#chat").submit(function(e){
+			e.preventDefault();
+
+			var mensagem = $(this).find("#texto_mensagem").val();
+			var usuario = $("#lista_usuarios").val(); 
+			
+			socket.emit("enviar mensagem", {msg: mensagem, usu: usuario}, function(){
+				$("form#chat #texto_mensagem").val("");
+			});
+		});
+
+		
+		socket.on("atualizar mensagens", function(dados){
+			var mensagem_formatada = $("<p />").text(dados.msg).addClass(dados.tipo);
+			$("#historico_mensagens").append(mensagem_formatada);
+		});
+
+		$("form#login").submit(function(e){
+			e.preventDefault();
+
+			
+			socket.emit("entrar", $(this).find("#nome").val(), function(valido){
+				if(valido){
+					
+					$("#acesso_usuario").hide();
+					$("#sala_chat").show();
+				}else{
+					
+					$("#acesso_usuario").val("");
+					alert("Nome já utilizado nesta sala");
+				}
+			});
+		});
+		
+		socket.on("atualizar usuarios", function(usuarios){
+			$("#lista_usuarios").empty();
+			$("#lista_usuarios").append("<option value=''>Todos</option>");
+				$.each(usuarios, function(indice){
+					var opcao_usuario = $("<option />").text(usuarios[indice]);
+					$("#lista_usuarios").append(opcao_usuario);
+			});
+		});
+    </script>
+</body>
+</html>
